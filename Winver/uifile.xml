@@ -1,0 +1,7 @@
+<duixml>
+	<HWNDElement resid="main" layoutpos="client" layout="borderlayout()">
+		<Element layout="flowlayout(0,2,2,0)" layoutpos="client">
+			<TouchButton id="atom(samplecolor)" height="32rp" width="128rp" content="Ok" borderthickness="rect(4,4,4,4)" contentalign="middlecenter" font="messagefont;115%"/>
+		</Element>
+	</HWNDElement>
+</duixml>
