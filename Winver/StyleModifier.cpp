@@ -4,12 +4,12 @@
 #include "ImmersiveColor.h"
 
 COLORREF ImmersiveColor;
-int wndbackground;
 int btnforeground;
+bool theme;
+const wchar_t* sheetName;
 
 void UpdateModeInfo() {
     int i = 0;
-    bool b = 0;
     LPCWSTR path = L"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize";
     HKEY hKey;
     DWORD lResult = RegOpenKeyEx(HKEY_CURRENT_USER, path, 0, KEY_READ, &hKey);
@@ -26,11 +26,11 @@ void UpdateModeInfo() {
         }
         RegCloseKey(hKey);
     }
-    if (i == 1) b = 1;
-    else b = 0;
-    ImmersiveColor = b ? CImmersiveColor::GetColor(IMCLR_SystemAccentDark1) : CImmersiveColor::GetColor(IMCLR_SystemAccentLight2);
-    wndbackground = b ? 4294967295 : 4280295456;
-    btnforeground = b ? 16777215 : 0;
+    if (i == 1) theme = 1;
+    else theme = 0;
+    ImmersiveColor = theme ? CImmersiveColor::GetColor(IMCLR_SystemAccentDark1) : CImmersiveColor::GetColor(IMCLR_SystemAccentLight2);
+    btnforeground = theme ? 16777215 : 0;
+    sheetName = theme ? L"w" : L"wd";
 }
 
 rgb_t ImmersiveToRGB(COLORREF immersivecolor) {

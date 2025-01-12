@@ -1,7 +1,47 @@
 <duixml>
-	<HWNDElement resid="main" layoutpos="client" layout="borderlayout()">
-		<Element layout="flowlayout(0,2,2,0)" layoutpos="client">
-			<TouchButton id="atom(samplecolor)" height="32rp" width="128rp" content="Ok" borderthickness="rect(4,4,4,4)" contentalign="middlecenter" font="messagefont;115%"/>
+	<HWNDElement resid="main" id="atom(Window)" layoutpos="client" layout="borderlayout()">
+		<Element layoutpos="client" layout="borderlayout()">
+			<Element id="atom(logo)" layoutpos="top" height="120rp" background="20063"/>
+			<Element id="atom(pages)" layoutpos="client" layout="borderlayout()" padding="rect(16rp,16rp,16rp,0)">
+				<Element id="atom(tabsbar)" layoutpos="top" layout="filllayout()" margin="rect(0,0,0,16rp)" background="argb(0,0,0,0)">
+					<Element id="atom(tabs)" layoutpos="client" layout="flowlayout()">
+						<TouchButton id="atom(tab1)" content="About" class="tab"/>
+						<TouchButton id="atom(tab2)" content="License" class="tab"/>
+					</Element>
+					<Element id="atom(tabPill)" layoutpos="absolute" x="40rp" animation="position|s|fast"/>
+				</Element>
+				<Element id="atom(pagesbar)" layoutpos="client" layout="filllayout()">
+					<Element id="atom(page1)" content="About page" class="page" layoutpos="client"/>
+					<Element id="atom(page2)" content="License page" class="page" layoutpos="none" alpha="0"/>
+				</Element>
+			</Element>
+		</Element>
+		<Element layout="flowlayout(0,0,1,0)" layoutpos="bottom" padding="rect(16rp,16rp,16rp,16rp)">
+			<TouchButton id="atom(samplecolor)" height="32rp" width="96rp" content="Ok" borderthickness="rect(4,4,4,4)" contentalign="middlecenter" font="messagefont;115%"/>
 		</Element>
 	</HWNDElement>
+	<stylesheets>
+		<style resid="wd">
+			<if id="atom(Window)">
+				<HWNDElement background="rgb(32,32,32)"/>
+			</if>
+			<if class="tab">
+				<TouchButton background="20066" margin="rect(0,0,16rp,0)" minsize="size(96rp,32rp)" contentalign="middlecenter" foreground="white" font="messagefont;115%"/>
+			</if>
+			<if class="page">
+				<Element background="argb(16,160,160,160)" contentalign="middlecenter" font="messagefont;115%" foreground="white" animation="alpha|s|fast"/>
+			</if>
+		</style>
+		<style resid="w">
+			<if id="atom(Window)">
+				<HWNDElement background="rgb(255,255,255)"/>
+			</if>
+			<if class="tab">
+				<TouchButton background="20063" margin="rect(0,0,16rp,0)" minsize="size(96rp,32rp)" contentalign="middlecenter" foreground="black" font="messagefont;115%"/>
+			</if>
+			<if class="page">
+				<Element background="argb(32,128,128,128)" contentalign="middlecenter" font="messagefont;115%" foreground="black" animation="alpha|s|fast"/>
+			</if>
+		</style>
+	</stylesheets>
 </duixml>

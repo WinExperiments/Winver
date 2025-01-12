@@ -326,6 +326,7 @@
     <Image Include="..\..\..\icons\buttonuntextured.bmp" />
     <Image Include="..\..\..\icons\buttonuntextured.png" />
     <Image Include="101.bmp" />
+    <Image Include="108.bmp" />
     <Image Include="Winver.ico" />
     <Image Include="small.ico" />
   </ItemGroup>

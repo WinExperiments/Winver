@@ -17,11 +17,12 @@ NativeHWNDHost* wnd;
 HWNDElement* parent;
 DUIXmlParser* parser;
 Element* pMain;
-
-
 unsigned long key = 0;
 
 TouchButton* samplecolor;
+Element* tabPill;
+TouchButton *tab1, *tab2;
+Element *page1, *page2;
 
 HRESULT err;
 HINSTANCE inst = GetModuleHandle(NULL);
@@ -67,6 +68,25 @@ void testEventListener(Element* elem, Event* iev) {
     }
 }
 
+void SwitchPage(Element* elem, Event* iev) {
+    if (iev->type == TouchButton::Click) {
+        if (elem == tab1) {
+            page2->SetLayoutPos(4);
+            page2->SetAlpha(0);
+            page1->SetLayoutPos(4);
+            page1->SetAlpha(255);
+            tabPill->SetX(40);
+        }
+        if (elem == tab2) {
+            page1->SetLayoutPos(4);
+            page1->SetAlpha(0);
+            page2->SetLayoutPos(4);
+            page2->SetAlpha(255);
+            tabPill->SetX(152);
+        }
+    }
+}
+
 
 unsigned long UpdateColor(LPVOID lpParam) {
     hMutex = CreateMutex(NULL, TRUE, szWindowClass);
@@ -96,25 +116,60 @@ unsigned long UpdateColor(LPVOID lpParam) {
 void StartListener() {
     DWORD colorListener;
     colorListenerHandle = CreateThread(0, 0, UpdateColor, NULL, 0, &colorListener);
-}
+} 
 
 void ModifyStyle()
 {
     LPCWSTR id = MAKEINTRESOURCE(101);
+    LPCWSTR id2 = MAKEINTRESOURCE(108);
     HBITMAP bmp = (HBITMAP)LoadImage(inst, id, IMAGE_BITMAP, 32, 32, 0);
-    if (bmp == NULL)
-    {
-        return;
-    }
+    HBITMAP bmp2 = (HBITMAP)LoadImage(inst, id2, IMAGE_BITMAP, 16, 3, 0);
     IterateBitmap(bmp, StandardBitmapPixelHandler);
-    Value* test;
+    IterateBitmap(bmp2, StandardBitmapPixelHandler);
     Value* bitmap = DirectUI::Value::CreateGraphic(bmp, 7, 0xffffffff, false, false, false);
+    Value* bitmap2 = DirectUI::Value::CreateGraphic(bmp2, 2, 0xffffffff, false, false, false);
     if (samplecolor != NULL) {
         samplecolor->SetValue(Element::BackgroundProp, 1, bitmap);
         samplecolor->SetForegroundColor(btnforeground);
-        pMain->SetBackgroundColor(wndbackground);
+    }
+    if (tabPill != NULL) {
+        tabPill->SetValue(Element::ContentProp, 1, bitmap2);
     }
     bitmap->Release();
+    bitmap2->Release();
+}
+
+void SetTheme() {
+    StyleSheet* sheet{};
+    Value* sheetStorage{};
+    parser->GetSheet((UCString)sheetName, &sheetStorage);
+    sheet = sheetStorage->GetStyleSheet();
+    pMain->SetSheet(sheet);
+    return;
+}
+
+Element* regElem(const wchar_t* elemName) {
+    Element* result = (Element*)pMain->FindDescendent(StrToID((UCString)elemName));
+    return result;
+}
+RichText* regRichText(const wchar_t* elemName) {
+    RichText* result = (RichText*)pMain->FindDescendent(StrToID((UCString)elemName));
+    return result;
+}
+Button* regBtn(const wchar_t* btnName) {
+    Button* result = (Button*)pMain->FindDescendent(StrToID((UCString)btnName));
+    return result;
+}
+TouchButton* regTouchBtn(const wchar_t* btnName) {
+    TouchButton* result = (TouchButton*)pMain->FindDescendent(StrToID((UCString)btnName));
+    return result;
+}
+Edit* regEdit(const wchar_t* editName) {
+    Edit* result = (Edit*)pMain->FindDescendent(StrToID((UCString)editName));
+    return result;
+}
+void assignFn(Element* btnName, void(*fnName)(Element* elem, Event* iev)) {
+    btnName->AddListener(new EventListener(fnName));
 }
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
@@ -126,7 +181,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     InitThread(2);
     RegisterAllControls();
 
-    NativeHWNDHost::Create((UCString)L"colors demo", NULL, NULL, CW_USEDEFAULT, CW_USEDEFAULT, 320, 200, NULL, WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU, 0, &wnd);
+    NativeHWNDHost::Create((UCString)L"About Windows", NULL, LoadIconW(inst, MAKEINTRESOURCE(1024)), CW_USEDEFAULT, CW_USEDEFAULT, 600, 600, NULL, WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU, 0, &wnd);
     DUIXmlParser::Create(&parser, NULL, NULL, NULL, NULL);
     parser->SetXMLFromResource(IDR_UIFILE2, hInstance, hInstance);
     HWNDElement::Create(wnd->GetHWND(), true, NULL, NULL, &key, (Element**)&parent);
@@ -137,12 +192,20 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     pMain->EndDefer(key);
     wnd->Host(pMain);
 
-    samplecolor = (TouchButton*)pMain->FindDescendent(StrToID((UCString)L"samplecolor"));
+    samplecolor = regTouchBtn(L"samplecolor");
+    tabPill = regElem(L"tabPill");
+    tab1 = regTouchBtn(L"tab1");
+    tab2 = regTouchBtn(L"tab2");
+    page1 = regElem(L"page1");
+    page2 = regElem(L"page2");
 
-    samplecolor->AddListener(new EventListener(testEventListener));
+    assignFn(samplecolor, testEventListener);
+    assignFn(tab1, SwitchPage);
+    assignFn(tab2, SwitchPage);
 
     UpdateModeInfo();
     ModifyStyle();
+    SetTheme();
 
     wnd->ShowWindow(SW_SHOW);
     StartMessagePump();
