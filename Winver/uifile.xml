@@ -17,7 +17,7 @@
 			</Element>
 		</Element>
 		<Element layout="flowlayout(0,0,1,0)" layoutpos="bottom" padding="rect(16rp,16rp,16rp,16rp)">
-			<TouchButton id="atom(samplecolor)" height="32rp" width="96rp" content="Ok" borderthickness="rect(4,4,4,4)" contentalign="middlecenter" font="messagefont;115%"/>
+			<TouchButton id="atom(samplecolor)" height="32rp" width="96rp" content="Ok" borderthickness="rect(4rp,4rp,4rp,4rp)" contentalign="middlecenter" font="messagefont;115%"/>
 		</Element>
 	</HWNDElement>
 	<stylesheets>

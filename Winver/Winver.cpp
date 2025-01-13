@@ -35,6 +35,8 @@ LRESULT CALLBACK SubclassWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
     if (uMsg == WM_SETTINGCHANGE) {
         UpdateModeInfo();
         ModifyStyle();
+        //SetTheme();
+        UpdateScale();
     }
     return CallWindowProc(WndProc, hWnd, uMsg, wParam, lParam);
 }
@@ -62,9 +64,17 @@ struct EventListener : public IElementListener {
     }
 };
 
+int dpiX, dpiY;
+void UpdateScale() {
+    HDC screen = GetDC(0);
+    dpiX = static_cast<INT>(GetDeviceCaps(screen, LOGPIXELSX));
+    dpiY = static_cast<INT>(GetDeviceCaps(screen, LOGPIXELSY));
+    ReleaseDC(0, screen);
+}
+
 void testEventListener(Element* elem, Event* iev) {
     if (iev->type == TouchButton::Click) {
-        exit(0);
+        samplecolor->SetContentString((UCString)std::to_wstring(dpiX).c_str());
     }
 }
 
@@ -75,14 +85,14 @@ void SwitchPage(Element* elem, Event* iev) {
             page2->SetAlpha(0);
             page1->SetLayoutPos(4);
             page1->SetAlpha(255);
-            tabPill->SetX(40);
+            tabPill->SetX(40 * dpiX / 96);
         }
         if (elem == tab2) {
             page1->SetLayoutPos(4);
             page1->SetAlpha(0);
             page2->SetLayoutPos(4);
             page2->SetAlpha(255);
-            tabPill->SetX(152);
+            tabPill->SetX(152 * dpiX / 96);
         }
     }
 }
@@ -118,12 +128,44 @@ void StartListener() {
     colorListenerHandle = CreateThread(0, 0, UpdateColor, NULL, 0, &colorListener);
 } 
 
+int GetScaleInterval() {
+    if (dpiX >= 384) return 7;
+    if (dpiX >= 288) return 6;
+    if (dpiX >= 240) return 5;
+    if (dpiX >= 192) return 4;
+    if (dpiX >= 144) return 3;
+    if (dpiX >= 120) return 2;
+    if (dpiX >= 96) return 1;
+}
+
+double GetScaleSizingInterval() {
+    if (dpiX >= 384) return 4.0;
+    if (dpiX >= 288) return 3.0;
+    if (dpiX >= 240) return 2.5;
+    if (dpiX >= 192) return 2.0;
+    if (dpiX >= 144) return 1.5;
+    if (dpiX >= 120) return 1.25;
+    if (dpiX >= 96) return 1.0;
+}
+
+int GetScaleSizingInterval2() {
+    if (dpiX >= 384) return 30;
+    if (dpiX >= 288) return 22;
+    if (dpiX >= 240) return 14;
+    if (dpiX >= 192) return 10;
+    if (dpiX >= 144) return 6;
+    if (dpiX >= 120) return 2;
+    if (dpiX >= 96) return 0;
+}
+
 void ModifyStyle()
 {
-    LPCWSTR id = MAKEINTRESOURCE(101);
-    LPCWSTR id2 = MAKEINTRESOURCE(108);
-    HBITMAP bmp = (HBITMAP)LoadImage(inst, id, IMAGE_BITMAP, 32, 32, 0);
-    HBITMAP bmp2 = (HBITMAP)LoadImage(inst, id2, IMAGE_BITMAP, 16, 3, 0);
+    int idNum = 100 + GetScaleInterval();
+    int idNum2 = 107 + GetScaleInterval();
+    LPCWSTR id = MAKEINTRESOURCE(idNum);
+    LPCWSTR id2 = MAKEINTRESOURCE(idNum2);
+    HBITMAP bmp = (HBITMAP)LoadImage(inst, id, IMAGE_BITMAP, 11 + GetScaleSizingInterval2(), 11 + GetScaleSizingInterval2(), 0);
+    HBITMAP bmp2 = (HBITMAP)LoadImage(inst, id2, IMAGE_BITMAP, 16 * GetScaleSizingInterval(), ceil(3 * GetScaleSizingInterval()), 0);
     IterateBitmap(bmp, StandardBitmapPixelHandler);
     IterateBitmap(bmp2, StandardBitmapPixelHandler);
     Value* bitmap = DirectUI::Value::CreateGraphic(bmp, 7, 0xffffffff, false, false, false);
@@ -139,11 +181,10 @@ void ModifyStyle()
     bitmap2->Release();
 }
 
+Value* sheetStorage;
 void SetTheme() {
-    StyleSheet* sheet{};
-    Value* sheetStorage{};
     parser->GetSheet((UCString)sheetName, &sheetStorage);
-    sheet = sheetStorage->GetStyleSheet();
+    StyleSheet* sheet = sheetStorage->GetStyleSheet();
     pMain->SetSheet(sheet);
     return;
 }
@@ -181,7 +222,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     InitThread(2);
     RegisterAllControls();
 
-    NativeHWNDHost::Create((UCString)L"About Windows", NULL, LoadIconW(inst, MAKEINTRESOURCE(1024)), CW_USEDEFAULT, CW_USEDEFAULT, 600, 600, NULL, WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU, 0, &wnd);
+    UpdateScale();
+    int windowsThemeX = (GetSystemMetricsForDpi(SM_CYSIZEFRAME, dpiX) + GetSystemMetricsForDpi(SM_CYEDGE, dpiX) * 2) * 2;
+    int windowsThemeY = windowsThemeX + GetSystemMetricsForDpi(SM_CYCAPTION, dpiY);
+    NativeHWNDHost::Create((UCString)L"About Windows", NULL, LoadIconW(inst, MAKEINTRESOURCE(1024)), CW_USEDEFAULT, CW_USEDEFAULT, (600 + windowsThemeX) * dpiX / 96, (600 + windowsThemeY) * dpiY / 96, NULL, WS_SYSMENU, 0, &wnd);
     DUIXmlParser::Create(&parser, NULL, NULL, NULL, NULL);
     parser->SetXMLFromResource(IDR_UIFILE2, hInstance, hInstance);
     HWNDElement::Create(wnd->GetHWND(), true, NULL, NULL, &key, (Element**)&parent);

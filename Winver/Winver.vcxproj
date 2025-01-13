@@ -325,8 +325,21 @@
   <ItemGroup>
     <Image Include="..\..\..\icons\buttonuntextured.bmp" />
     <Image Include="..\..\..\icons\buttonuntextured.png" />
+    <Image Include="100.bmp" />
     <Image Include="101.bmp" />
+    <Image Include="102.bmp" />
+    <Image Include="103.bmp" />
+    <Image Include="104.bmp" />
+    <Image Include="105.bmp" />
+    <Image Include="106.bmp" />
+    <Image Include="107.bmp" />
     <Image Include="108.bmp" />
+    <Image Include="109.bmp" />
+    <Image Include="110.bmp" />
+    <Image Include="111.bmp" />
+    <Image Include="112.bmp" />
+    <Image Include="113.bmp" />
+    <Image Include="114.bmp" />
     <Image Include="Winver.ico" />
     <Image Include="small.ico" />
   </ItemGroup>
@@ -342,6 +355,9 @@
   </ItemGroup>
   <ItemGroup>
     <Xml Include="uifile.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="Winver.manifest" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

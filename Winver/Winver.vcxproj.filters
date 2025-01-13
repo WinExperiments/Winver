@@ -381,6 +381,45 @@
     <Image Include="108.bmp">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="100.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="102.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="103.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="104.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="105.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="106.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="107.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="109.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="110.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="111.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="112.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="113.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="114.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="DirectUI\DirectUI.def">
@@ -400,5 +439,8 @@
   </ItemGroup>
   <ItemGroup>
     <Xml Include="uifile.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="Winver.manifest" />
   </ItemGroup>
 </Project>

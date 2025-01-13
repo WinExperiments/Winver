@@ -8,4 +8,5 @@ extern const wchar_t* sheetName;
 void UpdateModeInfo();
 void ModifyStyle();
 void SetTheme();
+void UpdateScale();
 void StandardBitmapPixelHandler(int& r, int& g, int& b, int& a);
