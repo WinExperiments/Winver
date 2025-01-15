@@ -17,7 +17,7 @@
 			</Element>
 		</Element>
 		<Element layout="flowlayout(0,0,1,0)" layoutpos="bottom" padding="rect(16rp,16rp,16rp,16rp)">
-			<TouchButton id="atom(samplecolor)" height="32rp" width="96rp" content="Ok" borderthickness="rect(4rp,4rp,4rp,4rp)" contentalign="middlecenter" font="messagefont;115%"/>
+			<TouchButton id="atom(samplecolor)" height="32rp" width="96rp" content="Ok" borderthickness="rect(4rp,4rp,4rp,4rp)" contentalign="middlecenter" font="resstr(201)"/>
 		</Element>
 	</HWNDElement>
 	<stylesheets>
@@ -26,10 +26,10 @@
 				<HWNDElement background="rgb(32,32,32)"/>
 			</if>
 			<if class="tab">
-				<TouchButton background="20066" margin="rect(0,0,16rp,0)" minsize="size(96rp,32rp)" contentalign="middlecenter" foreground="white" font="messagefont;115%"/>
+				<TouchButton background="20066" margin="rect(0,0,16rp,0)" minsize="size(96rp,32rp)" contentalign="middlecenter" foreground="white" font="resstr(201)"/>
 			</if>
 			<if class="page">
-				<Element background="argb(16,160,160,160)" contentalign="middlecenter" font="messagefont;115%" foreground="white" animation="alpha|s|fast"/>
+				<Element background="argb(16,160,160,160)" contentalign="middlecenter" font="resstr(201)" foreground="white" animation="alpha|s|fast"/>
 			</if>
 		</style>
 		<style resid="w">
@@ -37,10 +37,10 @@
 				<HWNDElement background="rgb(255,255,255)"/>
 			</if>
 			<if class="tab">
-				<TouchButton background="20063" margin="rect(0,0,16rp,0)" minsize="size(96rp,32rp)" contentalign="middlecenter" foreground="black" font="messagefont;115%"/>
+				<TouchButton background="20063" margin="rect(0,0,16rp,0)" minsize="size(96rp,32rp)" contentalign="middlecenter" foreground="black" font="resstr(201)"/>
 			</if>
 			<if class="page">
-				<Element background="argb(32,128,128,128)" contentalign="middlecenter" font="messagefont;115%" foreground="black" animation="alpha|s|fast"/>
+				<Element background="argb(32,128,128,128)" contentalign="middlecenter" font="resstr(201)" foreground="black" animation="alpha|s|fast"/>
 			</if>
 		</style>
 	</stylesheets>
