@@ -188,23 +188,50 @@ namespace DirectUI
 		virtual void T2() = 0;
 	};
 
+	struct DepRecs
+	{
+		int iDepPos;
+		int cDepCnt;
+	};
+
+	enum LogicalOperators
+	{
+		PSLO_NULL = 0,
+		PSLO_Equal = 1,
+		PSLO_NotEqual = 2,
+		PSLO_Greater = 3,
+		PSLO_GreaterEqual = 4,
+		PSLO_Lesser = 5,
+		PSLO_LesserEqual = 6
+	};
+
+	struct Cond
+	{
+		PropertyInfo* ppi;
+		LogicalOperators nLogOp;
+		Value* pv;
+	};
+
+	struct Decl
+	{
+		PropertyInfo* ppi;
+		Value* pv;
+	};
+
 	class UILIB_API StyleSheet
 	{
 	public:
-		StyleSheet(StyleSheet const &);
-		StyleSheet(void);
-		StyleSheet & operator=(StyleSheet const &);
+		static HRESULT Create(StyleSheet** ppSheet);
 
-		static long __stdcall Create(StyleSheet * *);
-
-		virtual void T1() = 0;
-		virtual void T2() = 0;
-		virtual void T3() = 0;
-		virtual void T4() = 0;
-		virtual void T5() = 0;
-		virtual void T6() = 0;
-		virtual void T7() = 0;
-		virtual void T8() = 0;
+		virtual void Destroy() = 0;
+		virtual HRESULT AddRule(const wchar_t*, IClassInfo*, Cond*, Decl*) = 0;
+		virtual void MakeImmutable() = 0;
+		virtual class Value* GetSheetValue(Element*, const PropertyInfo*) = 0;
+		virtual void GetSheetDependencies(Element*, const PropertyInfo*, DepRecs*, DeferCycle*, HRESULT*) = 0;
+		virtual void GetSheetScope(Element*, DepRecs*, DeferCycle*, HRESULT*) = 0;
+		virtual const wchar_t* GetSheetResid() = 0;
+		virtual HRESULT SetSheetResid(const wchar_t*) = 0;
+		virtual HRESULT SetBaseSheet(Value*, unsigned int) = 0;
 	};
 
 }

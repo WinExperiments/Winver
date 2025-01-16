@@ -38,11 +38,6 @@ namespace DirectUI
 		UINT64 *unk2;
 	};
 
-	struct DepRecs
-	{
-
-	};
-
 	struct UILIB_API NavReference
 	{
 	public:

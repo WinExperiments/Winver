@@ -11,6 +11,8 @@
 #include "StyleModifier.h"
 #include "BitmapHelper.h"
 #include <WinUser.h>
+#include <thread>
+#include <chrono>
 
 using namespace DirectUI;
 using namespace std;
@@ -30,18 +32,19 @@ HRESULT err;
 HINSTANCE inst = GetModuleHandle(NULL);
 WNDPROC WndProc;
 HWND hWnd;
-HANDLE colorListenerHandle;
+HANDLE listenerHandle;
 HANDLE hMutex;
 constexpr LPCWSTR szWindowClass = L"WINVER";
 
 LRESULT CALLBACK SubclassWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     if (uMsg == WM_DPICHANGED) {
         UpdateScale();
+        ModifyStyle();
     }
     if (uMsg == WM_SETTINGCHANGE) {
         UpdateModeInfo();
         ModifyStyle();
-        //SetTheme();
+        SetTheme();
     }
     return CallWindowProc(WndProc, hWnd, uMsg, wParam, lParam);
 }
@@ -78,10 +81,13 @@ void InitialUpdateScale() {
 }
 
 void UpdateScale() {
+    static int windowsThemeX = (GetSystemMetrics(SM_CYSIZEFRAME) + GetSystemMetrics(SM_CYEDGE) * 2) * 2;
+    static int windowsThemeY = windowsThemeX + GetSystemMetrics(SM_CYCAPTION);
     dpiOld = dpi;
     dpi = GetDpiForWindow(hWnd);
     tabPill->SetX((40 + 112 * pageIndex) * dpi / 96);
     UpdateFontSize();
+    SetWindowPos(hWnd, NULL, NULL, NULL, (600 + windowsThemeX) * dpi / 96, (600 + windowsThemeY) * dpi / 96, SWP_NOMOVE);
     isDpiPreviouslyChanged = true;
 }
 
@@ -112,7 +118,7 @@ void SwitchPage(Element* elem, Event* iev) {
 }
 
 
-unsigned long UpdateColor(LPVOID lpParam) {
+unsigned long MessageListener(LPVOID lpParam) {
     hMutex = CreateMutex(NULL, TRUE, szWindowClass);
     if (!hMutex || ERROR_ALREADY_EXISTS == GetLastError())
     {
@@ -138,8 +144,8 @@ unsigned long UpdateColor(LPVOID lpParam) {
 }
 
 void StartListener() {
-    DWORD colorListener;
-    colorListenerHandle = CreateThread(0, 0, UpdateColor, NULL, 0, &colorListener);
+    DWORD listener;
+    listenerHandle = CreateThread(0, 0, MessageListener, NULL, 0, &listener);
 } 
 
 int GetScaleInterval() {
@@ -224,11 +230,12 @@ void UpdateFontSize() {
     page2->SetFont((UCString)buffer);
 }
 
-Value* sheetStorage;
 void SetTheme() {
+    StyleSheet* sheet = pMain->GetSheet();
+    Value* sheetStorage = DirectUI::Value::CreateStyleSheet(sheet);
     parser->GetSheet((UCString)sheetName, &sheetStorage);
-    StyleSheet* sheet = sheetStorage->GetStyleSheet();
-    pMain->SetSheet(sheet);
+    pMain->SetValue(Element::SheetProp, 1, sheetStorage);
+    sheetStorage->Release();
     return;
 }
 
@@ -266,8 +273,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     RegisterAllControls();
 
     InitialUpdateScale();
-    int windowsThemeX = (GetSystemMetricsForDpi(SM_CYSIZEFRAME, dpi) + GetSystemMetricsForDpi(SM_CYEDGE, dpi) * 2) * 2;
-    int windowsThemeY = windowsThemeX + GetSystemMetricsForDpi(SM_CYCAPTION, dpi);
+    int windowsThemeX = (GetSystemMetrics(SM_CYSIZEFRAME) + GetSystemMetrics(SM_CYEDGE) * 2) * 2;
+    int windowsThemeY = windowsThemeX + GetSystemMetrics(SM_CYCAPTION);
     NativeHWNDHost::Create((UCString)L"About Windows", NULL, LoadIconW(inst, MAKEINTRESOURCE(1024)), CW_USEDEFAULT, CW_USEDEFAULT, (600 + windowsThemeX) * dpi / 96, (600 + windowsThemeY) * dpi / 96, NULL, WS_SYSMENU, 0, &wnd);
     DUIXmlParser::Create(&parser, NULL, NULL, NULL, NULL);
     parser->SetXMLFromResource(IDR_UIFILE2, hInstance, hInstance);
@@ -279,7 +286,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     pMain->SetVisible(true);
     pMain->EndDefer(key);
     wnd->Host(pMain);
-
+    
     samplecolor = regTouchBtn(L"samplecolor");
     tabPill = regElem(L"tabPill");
     tab1 = regTouchBtn(L"tab1");
